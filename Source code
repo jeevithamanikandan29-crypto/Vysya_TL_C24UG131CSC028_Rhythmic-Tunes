@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dhanush Music Player</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+    }
+    .player {
+      text-align: center;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 20px;
+      width: 360px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    h1 { margin-bottom: 15px; }
+    button {
+      margin: 6px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff4b2b;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+    button:hover { background: #ff9068; }
+    .progress { width: 100%; height: 8px; background: #ddd; margin: 12px 0; border-radius: 5px; overflow: hidden; }
+    .progress-bar { height: 8px; width: 0; background: #ff4b2b; }
+    /* Wave Animation */
+    .wave {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+    }
+    .bar {
+      width: 5px;
+      height: 20px;
+      background: #fff;
+      animation: bounce 1s infinite ease-in-out;
+    }
+    .bar:nth-child(2) { animation-delay: 0.2s; }
+    .bar:nth-child(3) { animation-delay: 0.4s; }
+    .bar:nth-child(4) { animation-delay: 0.6s; }
+    .bar:nth-child(5) { animation-delay: 0.8s; }
+    @keyframes bounce {
+      0%, 100% { height: 20px; }
+      50% { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="player">
+    <h1>🎶 Dhanush Hits 🎶</h1>
+    <audio id="audio"></audio>
+    <h2 id="song-title">Loading...</h2>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <button onclick="prevSong()">⏮ Prev</button>
+    <button onclick="playSong()">▶ Play</button>
+    <button onclick="pauseSong()">⏸ Pause</button>
+    <button onclick="nextSong()">⏭ Next</button>
+  </div>
+
+  <div class="wave">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <script>
+    const audio = document.getElementById("audio");
+    const progressBar = document.getElementById("progress-bar");
+    const songTitle = document.getElementById("song-title");
+
+    // 🎵 Playlist
+    const songs = [
+      { title: "Kannu Rendum", file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+      { title: "Rowdy Baby", file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+      { title: "Why This Kolaveri", file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+      { title: "Megham Karukatha", file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+      { title: "VIP Theme", file: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" }
+    ];
+
+    let currentSong = 0;
+
+    function loadSong(index) {
+      audio.src = songs[index].file;
+      songTitle.textContent = songs[index].title;
+      audio.load();
+    }
+
+    function playSong() { audio.play(); }
+    function pauseSong() { audio.pause(); }
+    function nextSong() {
+      currentSong = (currentSong + 1) % songs.length;
+      loadSong(currentSong);
+      playSong();
+    }
+    function prevSong() {
+      currentSong = (currentSong - 1 + songs.length) % songs.length;
+      loadSong(currentSong);
+      playSong();
+    }
+
+    // Update progress bar
+    audio.ontimeupdate = function() {
+      if (audio.duration) {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = progress + "%";
+      }
+    };
+
+    // Auto next after song ends
+    audio.onended = function() { nextSong(); };
+
+    // Load first song
+    loadSong(currentSong);
+  </script>
+</body>
+</html>
